@@ -1,0 +1,12 @@
+{
+"baseUrl":"https://visualizador-front-qa.gcba.gob.ar/",
+"VITE_APP_API_URL":"https://visualizador-back-qa.gcba.gob.ar/",
+"VITE_GEOSERVER_URL": "https://geoserver-qa.gcba.gob.ar",
+"VITE_GEONETWORK_URL": "https://geonetwork-qa.gcba.gob.ar/geonetwork/srv/api",
+"VITE_IDECABA_URL":"https://portal-web-idecaba-qa.gcba.gob.ar/",
+"NORMATIVA": "https://portal-web-idecaba-qa.gcba.gob.ar/Institucional/Normativas",
+"INSTITUCIONALIDAD": "https://portal-web-idecaba-qa.gcba.gob.ar/Institucional/Organizacion",
+"GEONETWORK": "https://geonetwork-qa.gcba.gob.ar/geonetwork/",
+"adminidecaba": "https://visualizador-back-qa.gcba.gob.ar/news/"
+
+}

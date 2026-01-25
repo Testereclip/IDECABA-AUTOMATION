@@ -1,0 +1,9 @@
+PARA EJECUTAR TODO
+npm run test:allure
+npm run test:allure:qa
+npm run test:allure:hml
+
+O paso a paso
+npm run cy:run
+npm run allure:generate
+npm run allure:open

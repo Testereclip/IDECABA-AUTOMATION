@@ -1,0 +1,28 @@
+{
+  "name": "test_cypress_visor",
+  "version": "1.0.0",
+  "description": "Pruebas e2e para el visor de IDECABA",
+  "main": "index.js",
+ "scripts": {
+    "cy:run": "cypress run --env allure=true",
+    "allure:clear": "rimraf allure-results allure-report",
+    "allure:generate": "allure generate allure-results --clean",
+    "allure:open": "allure open allure-report",
+    "test:allure": "npm run allure:clear && npm run cy:run && npm run allure:generate && npm run allure:open",
+    "cy:run:qa": "cypress run --env environment=qa,allure=true",
+    "test:allure:qa": "allure:clear && npm run cy:run:qa && npm run allure:generate && npm run allure:open",
+    "cy:run:hml": "cypress run --env environment=hml,allure=true",
+    "test:allure:hml": "npm run allure:clear && npm run cy:run:hml && npm run allure:generate && npm run allure:open"
+      },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@shelex/cypress-allure-plugin": "^2.41.2",
+    "adm-zip": "^0.5.16",
+    "cypress": "^14.2.1",
+    "cypress-downloadfile": "^1.2.4",
+    "cypress-multi-reporters": "^2.0.5",
+    "rimraf": "^6.1.2"
+  }
+}
