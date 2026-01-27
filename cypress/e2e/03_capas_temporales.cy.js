@@ -9,11 +9,15 @@ describe('Capas Temporales',() =>{
 
     it('Verificacion', () => {
         cy.viewport(1920, 1080) // o cualquier tamaño más grande
-        cy.get('.wms-control-button').click();
+
+        cy.get('.wms-control-button').click();//clic en el boton de capas temporales
+
         cy.get('input[placeholder="http://tu-servidor.com/geoserver/wms"]') // Abre el modal / panel de carga WMS
+
         .should('be.visible') //verifica que sea visible
         .clear()
         .type('https://geoserver.buenosaires.gob.ar/geoserver/catalogo_og_130/wms', { delay: 0 });
+
         cy.get('input[placeholder="http://tu-servidor.com/geoserver/wms"]')//Busca el input del WMS usando el placeholder (selector claro y estable)
         .closest('form')
         .within(() => {
@@ -31,17 +35,16 @@ describe('Capas Temporales',() =>{
         cy.get('#wmsmodal')
         .within(() => {
         cy.get('button.btn-close[aria-label="Cerrar"]').click();
+        cy.wait(1000)
         cy.get('#wmsmodal').should('not.exist');
         cy.get('label.form-checkbox-label[for="agencias_viaje"]')
         .should('exist')
         .and('contain.text', 'agencias_viaje');
 
-  });
-
-
-
-
-
-
-}) 
+        })
+        // ✅ Validar si existe el boton y el texto Capas activas
+        cy.get('.badge').should('be.visible');
+        cy.get('.d-flex > .material-symbols-outlined').should('be.visible');
+        cy.get('#search').should('be.visible');
+    }) 
 })
