@@ -1,16 +1,45 @@
-describe('Barra de busqueda de capas y de direcciones', () => {
+describe('Capas públicas - integración WMS', () => {
   beforeEach(() => {
-    // Paso 2: visitar la app
+    // Paso 1: visitar la app
     cy.visit('/');
-
-
-    // Paso 3: interceptar XHR/fetch si querés silenciar logs
+    // Paso 2: interceptar XHR/fetch si querés silenciar logs
     cy.intercept({ resourceType: /xhr|fetch/ }, { log: false });
+      { retries: 2 }
   });
-    it('Capas publicas', () => {
-      cy.get('#paso4 > .fs-5 > .material-symbols-outlined').should('be.visible');
-      cy.get('#paso4').click()
+it('Carga capas, consume WMS y renderiza en mapa', () => {
 
-    })
-})    
-  
+    cy.intercept('GET', '**/visor/capas/publicas**').as('capasPublicas');
+
+    cy.get('#paso4')
+      .should('be.visible')
+      .and('have.attr', 'href', '#/capas')
+      .click();
+
+    cy.wait('@capasPublicas')
+      .its('response.statusCode')
+      .should('eq', 200);
+
+    cy.contains('.collapse-title', 'Demarcacion')
+      .should('be.visible')
+      .click();
+
+    cy.get('input[type="checkbox"][id="Distritos Económicos"]')
+      .should('exist')
+      .and('not.be.checked')
+      .check({ force: true });
+
+    // ✅ Validar botón eliminar capa
+    cy.get('.btn-eliminar-capas')
+      .should('exist')
+      .and('be.visible');
+
+    // ✅ Validar contenedor Leaflet
+    cy.get('.leaflet-tile-container')
+      .should('exist')
+      .and('be.visible');
+      
+    cy.get('.leaflet-layer[style*="z-index: 20"]')
+      .should('exist');
+
+});
+})
