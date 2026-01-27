@@ -1,0 +1,63 @@
+name: Cypress + Allure Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Ambiente a ejecutar (dev / qa)"
+        required: true
+        default: "qa"
+
+jobs:
+  cypress-tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        browser: [chrome, firefox, edge]
+
+    steps:
+      # 🔹 Checkout del repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 🔹 Node (compatible con Cypress 14)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      # 🔹 Instalar dependencias
+      - name: Install dependencies
+        run: npm ci
+
+      # 🔹 Limpiar resultados previos
+      - name: Clean Allure results
+        run: |
+          rm -rf allure-results
+          rm -rf allure-report
+
+      # 🔹 Ejecutar Cypress
+      - name: Run Cypress tests
+        run: |
+          npx cypress run \
+            --browser ${{ matrix.browser }} \
+            --env environment=${{ github.event.inputs.environment || 'qa' }},allure=true
+
+      # 🔹 Generar Allure Report
+      - name: Generate Allure report
+        if: always()
+        run: |
+          npx allure generate allure-results --clean -o allure-report
+
+      # 🔹 Subir reporte como artifact
+      - name: Upload Allure report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report-${{ matrix.browser }}
+          path: allure-report
