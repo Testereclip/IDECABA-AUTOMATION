@@ -5,7 +5,6 @@ const allureWriter = require('@shelex/cypress-allure-plugin/writer');
 const { downloadFile } = require('cypress-downloadfile/lib/addPlugin');
 const AdmZip = require('adm-zip');
 
-
 function loadEnvConfig(environment) {
   const envPath = path.resolve(
     __dirname,
@@ -24,6 +23,11 @@ function loadEnvConfig(environment) {
 module.exports = defineConfig({
   projectId: 'xvtr3c',
 
+  retries: {
+    runMode: 2,
+    openMode: 0
+  },
+
   reporter: "cypress-multi-reporters",
   reporterOptions: {
     reporterEnabled: "mocha-junit-reporter",
@@ -36,42 +40,66 @@ module.exports = defineConfig({
 
   e2e: {
     setupNodeEvents(on, config) {
-      const environment = config.env.environment || 'qa';
-      
+      const environment = config.env.environment || 'dev';
       const envConfig = loadEnvConfig(environment);
 
-      // 🔹 setear baseUrl dinámico
+      // 🔹 baseUrl dinámico
       config.baseUrl = envConfig.baseUrl;
 
-      // 🔹 inyectar el resto de variables
+      // 🔹 inyectar variables del env/*.json
       config.env = {
         ...config.env,
         ...envConfig
       };
 
+      // 🔹 Allure plugin
       allureWriter(on, config);
-      
 
+      // ✅ ALLURE ENVIRONMENT (ESTO ES LO QUE FALTABA)
+on('before:run', (runDetails) => {
+  const resultsPath = path.join(__dirname, 'allure-results');
 
-on('task', {
-      deleteDownloads() {
-        if (fs.existsSync(config.downloadsFolder)) {
-          fs.emptyDirSync(config.downloadsFolder);
-        }
-        return null;
-      },
+  if (!fs.existsSync(resultsPath)) {
+    fs.mkdirSync(resultsPath, { recursive: true });
+  }
 
-  checkZipContainsShp(fileName) {
-    const zipPath = path.join(__dirname, 'cypress', 'downloads', fileName);
-    const zip = new AdmZip(zipPath);
-    const entries = zip.getEntries();
+  const browserName =
+    runDetails &&
+    runDetails.browser &&
+    runDetails.browser.name
+      ? runDetails.browser.name
+      : 'unknown';
 
-    return entries.some(e => e.entryName.endsWith('.shp'));
-  },
+  const envFileContent = `
+Environment=${environment}
+BaseUrl=${config.baseUrl}
+Browser=${browserName}
+`;
 
-  downloadFile
+  fs.writeFileSync(
+    path.join(resultsPath, 'environment.properties'),
+    envFileContent.trim()
+  );
 });
 
+      // 🔹 Tasks
+      on('task', {
+        deleteDownloads() {
+          if (fs.existsSync(config.downloadsFolder)) {
+            fs.emptyDirSync(config.downloadsFolder);
+          }
+          return null;
+        },
+
+        checkZipContainsShp(fileName) {
+          const zipPath = path.join(__dirname, 'cypress', 'downloads', fileName);
+          const zip = new AdmZip(zipPath);
+          const entries = zip.getEntries();
+          return entries.some(e => e.entryName.endsWith('.shp'));
+        },
+
+        downloadFile
+      });
 
       return config;
     },
