@@ -38,6 +38,7 @@ it('Carga capas, consume WMS y renderiza en mapa', () => {
       .should('exist')
       .and('be.visible');
       
+    // ✅ Validar la renderizacion de la capa en el mapa
     cy.get('.leaflet-layer[style*="z-index: 20"]')
       .should('exist');
 
