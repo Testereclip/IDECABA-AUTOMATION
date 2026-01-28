@@ -7,3 +7,15 @@ O paso a paso
 npm run cy:run
 npm run allure:generate
 npm run allure:open
+
+npm run cy:run:chrome:dev
+npm run cy:run:firefox:dev
+npm run cy:run:edge:dev
+
+npm run allure:generate:chrome:dev
+npm run allure:generate:firefox:dev
+npm run allure:generate:edge:dev
+
+npm run allure open allure-report-chrome-dev
+npm run allure open allure-report-firefox-dev
+npm run allure-report-edge-dev
