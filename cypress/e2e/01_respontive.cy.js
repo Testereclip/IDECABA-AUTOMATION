@@ -208,8 +208,8 @@ describe('Validación IDECABA - Desktop',() =>{
   })
 
     it('Validacion de búsquedas ', () => {
-        const direcciones = ['corrientes 1300', 'azopardo 667', 'av belgrano 1345', 'bulnes 1780', 'gurruchaga 2018'];
-        const sugerencias = ['CORRIENTES AV. 1300', 'AZOPARDO 667', 'BELGRANO AV. 1345', 'BULNES 1780', 'GURRUCHAGA 2018'];
+        const direcciones = ['corrientes 1300', 'azopardo 667', 'av belgrano 1345', 'bulnes 1780', 'gurruchaga 2018', 'Sarmiento 285','cullen 4817'];
+        const sugerencias = ['CORRIENTES AV. 1300', 'AZOPARDO 667', 'BELGRANO AV. 1345', 'BULNES 1780', 'GURRUCHAGA 2018','SARMIENTO 285','CULLEN 4817'];
       
         direcciones.forEach((direccion, index) => {
           cy.wait(1000); // espera antes de escribir
@@ -226,6 +226,24 @@ describe('Validación IDECABA - Desktop',() =>{
           cy.wait(500); // espera después de limpiar
         })
     })
+
+  it('Mini mapa inicia minimizado y se expande al hacer click', () => {
+
+    // 1️⃣ Verificar estado inicial (minimizado)
+    cy.get('.leaflet-control-minimap-toggle-display')
+      .should('be.visible')
+      .and('have.class', 'minimized-bottomleft')
+      .and('have.attr', 'title', 'Mostrar Mini Mapa')
+
+    // 2️⃣ Click para expandir
+    cy.get('.leaflet-control-minimap-toggle-display')
+      .click()
+
+    // 3️⃣ Verificar estado expandido
+    cy.get('.leaflet-control-minimap-toggle-display')
+      .should('not.have.class', 'minimized-bottomleft')
+      .and('have.attr', 'title', 'Ocultar Mini Mapa')
+  })
 
   it('Validar la barra de capas"', () => {
 
